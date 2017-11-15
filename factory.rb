@@ -17,7 +17,7 @@ class Factory
       end
 
       def [](arg)
-        if arg.is_a?(Integer)
+        #if arg.is_a?(Integer)
         instance_variable_get("@#{arg}")
         end
       end

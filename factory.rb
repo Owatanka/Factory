@@ -1,12 +1,8 @@
 class Factory
   def self.new(*args, &block)
-      class_name = if args.first.is_a? String
-                   unless args.first.match(/^[A-Z]/)
-                     raise(NameError, "identifier #{args.first} needs to be constant")
-                   end
-                   args.shift
-                   end
-      new_class = Factory.const_set(class_name, Class.new{
+      name = args.shift if args.first.is_a? String
+      
+      new_class = Class.new do
       attr_accessor *args
       
       define_method :initialize do |*vars|
@@ -15,9 +11,8 @@ class Factory
         args.each_with_index do |var, index|
           instance_variable_set "@#{var}", vars[index]
       end
-      end
-      })
-
+      end   
+      
       def ==(obj)
         self.class == obj.class && values == obj.values
       end
@@ -86,5 +81,6 @@ class Factory
       
       class_eval(&block) if block_given?
 end
-    
+name ? const_set(name, new_class) : new_class
+end
 end
